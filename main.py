@@ -307,7 +307,6 @@ def get_credentials():
     if sys.stdin.isatty():
         print("Username: ", end='')
         username = input()
-        print("Password: ", end='')
         password = getpass.getpass(prompt='Password: ', stream=None)
     else:
         username = sys.stdin.readline().rstrip()
