@@ -2,7 +2,7 @@
 This project downloads all content from ost.hacking-lab.com and creates a folder structure as follow:
 ```
 event
-   challange
+   challenge
       Curriculum Event
          media
             picture01.png
