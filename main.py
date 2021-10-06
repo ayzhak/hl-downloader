@@ -293,12 +293,12 @@ def remove_umlaut(string):
 
 
 def get_credentials():
-    cred_file = ".hl-cred.sample.json"
+    cred_file = ".hl-cred.json"
     if os.path.exists(cred_file):
         f = open(cred_file, )
         data = json.load(f)
         return data
-    cred_file = "~/.hl-cred.sample.json"
+    cred_file = "~/.hl-cred.json"
     if os.path.exists(cred_file):
         f = open(cred_file, )
         data = json.load(f)
@@ -325,42 +325,54 @@ if __name__ == '__main__':
     base_folder = '.'
 
     events = hl.get_own_events()
-    event_bar = tqdm(events, desc="Events")
-    for event in event_bar:
-        event_bar.set_description(event['name'])
+    bar_event = tqdm(events, desc="Events")
+    for event in bar_event:
+        bar_event.set_description(event['name'])
         try:
-            curriculumevent_bar = tqdm(hl.get_curriculumevents(event['id']), desc="Curriculum", leave=False)
+            bar_curriculumevent = tqdm(hl.get_curriculumevents(event['id']), desc="Curriculum", leave=False)
         except requests.HTTPError as e:
             continue
-        for curriculumevent in curriculumevent_bar:
+        for curriculumevent in bar_curriculumevent:
             try:
                 units = hl.get_units(curriculumevent['id'])
             except requests.HTTPError as e:
                 continue
             if not isinstance(units, list):
                 continue
-            curriculumevent_bar.set_description(curriculumevent['name'])
-            unit_bar = tqdm(units, desc="Challanges ", leave=False)
-            for unit in unit_bar:
-                unit_bar.set_description(unit['title'])
+            bar_curriculumevent.set_description(curriculumevent['name'])
+            bar_unit = tqdm(units, desc="Challanges ", leave=False)
+            for unit in bar_unit:
+                bar_unit.set_description(unit['title'])
+                # Setup
                 valid_path_event_name = make_valid_filename(event['name'])
                 valid_path_curriculumevent_name = make_valid_filename(curriculumevent['name'])
                 challenge = hl.get_challenge(unit)
                 unit_folder = create_path(base_folder, event, curriculumevent, unit, '')
                 makedir(unit_folder)
+
+                # Download resources from challange task
                 path_resource_folder = create_path(base_folder, event, curriculumevent, unit, 'resources')
                 makedir(path_resource_folder)
                 hl.download_resources(path_resource_folder, challenge)
+
+                # Download attachments from comments
                 path_comment_folder = create_path(base_folder, event, curriculumevent, unit, 'comments')
                 makedir(path_comment_folder)
                 hl.download_comment_attachments(path_comment_folder, hl.get_challenge_comment(unit))
+
+                # Download media from Challange description
                 path_media_folder = create_path(base_folder, event, curriculumevent, unit, 'medias')
                 makedir(path_media_folder)
                 hl.download_medias(path_media_folder, challenge)
+
                 challenge = remove_links(challenge)
+
+                # Create README.md
                 challenge_file = create_path(base_folder, event, curriculumevent, unit, 'README.md')
                 write_challange_content(challenge_file, event, curriculumevent, challenge)
+                # Create COMMENT.md
                 comment_file = create_path(base_folder, event, curriculumevent, unit, 'COMMENT.md')
+                # Crete WRITEUP.md
                 write_comment_content(comment_file, hl.get_challenge_comment(unit))
                 writeup_file = create_path(base_folder, event, curriculumevent, unit, 'WRITEUP.md')
                 write_writeup_content(writeup_file, event, curriculumevent, challenge, hl.author)
