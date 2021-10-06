@@ -15,7 +15,7 @@ event
 
 Install the requirements
 ```python
-pip install requirements.txt 
+pip install -r requirements.txt 
 ```
 
 ### Optional: Credentials file
