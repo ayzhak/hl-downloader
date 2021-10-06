@@ -198,7 +198,7 @@ def write_challange_content(path, event, curriculumevent, challange):
         'event': event,
         'curriculum': curriculumevent,
         'challange': challange
-    }, path, 'README.md')
+    }, path, 'README.template.md')
 
 
 def write_writeup_content(path, event, curriculumevent, challange, author):
@@ -207,13 +207,13 @@ def write_writeup_content(path, event, curriculumevent, challange, author):
         'curriculum': curriculumevent,
         'challange': challange,
         'author': author
-    }, path, 'WRITEUP.md')
+    }, path, 'WRITEUP.template.md')
 
 
 def write_comment_content(path, comments):
     render_template({
         'comments': comments,
-    }, path, 'COMMENTS.md')
+    }, path, 'COMMENTS.template.md')
 
 
 def replace_medialink_in_content_with_local_filename(content):
